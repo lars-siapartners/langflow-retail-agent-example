@@ -3,8 +3,11 @@ from database import create_db, get_product_data, get_products
 from frontend import product_fragment
 
 
+
+
 if "engine" not in st.session_state:
     st.session_state.engine = create_db()
+    
 
 
 st.title("Webshop")
