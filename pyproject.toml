@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "duckdb>=1.4.3",
+    "flask>=3.1.2",
     "pydantic>=2.12.5",
     "sqlmodel>=0.0.31",
     "streamlit>=1.52.2",
