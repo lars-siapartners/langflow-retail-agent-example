@@ -57,6 +57,7 @@ def create_db() -> Engine:
         generate_sample_data(engine)
     return engine
 
+
 def load_db() -> Engine:
     engine = create_engine("sqlite:///retail_inventory.db")
     SQLModel.metadata.create_all(engine)
@@ -136,25 +137,24 @@ def get_products(engine: Engine) -> List[Product]:
     return products
 
 
-def get_product_data(engine: Engine) -> pd.DataFrame:
+def get_product_data(engine: Engine, return_json=False) -> pd.DataFrame:
     with Session(engine) as session:
-        data = session.exec(
-            select(Product, StockLevels, RestockRules, Supplier)
+        result = session.exec(
+            select(Product, StockLevels, RestockRules)
             .join(StockLevels)
             .join(RestockRules)
-            .join(Supplier)
         ).all()
 
-    df = pd.DataFrame(
-        [
-            {
-                "Name": p.name,
-                "Stock Quantity": sl.stock_quantity,
-                "Minimum Stock": rr.minimum_stock,
-                "Order Quantity": rr.order_quantity,
-                "Supplier Email": s.contact_info,
-            }
-            for p, sl, rr, s in data
-        ]
-    )
-    return df
+    data = [
+        {
+            "Name": p.name,
+            "Stock Quantity": sl.stock_quantity,
+            "Minimum Stock": rr.minimum_stock,
+            "Order Quantity": rr.order_quantity,
+        }
+        for p, sl, rr in result
+    ]
+    if return_json:
+        return data
+
+    return pd.DataFrame(data)
