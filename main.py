@@ -1,6 +1,8 @@
 import streamlit as st
 from database import create_db, get_product_data, get_products
 from frontend import product_fragment
+from streamlit.web.server import Server
+from flask import Flask
 
 
 
@@ -8,7 +10,35 @@ from frontend import product_fragment
 if "engine" not in st.session_state:
     st.session_state.engine = create_db()
     
+if not hasattr(st, 'already_started_server'):
+    st.already_started_server = True
+    engine = create_db()
 
+    st.write('''
+        The first time this script executes it will run forever because it's
+        running a Flask server.
+
+        Just close this browser tab and open a new one to see your Streamlit
+        app.
+    ''')
+
+
+    app = Flask(__name__)
+
+    @app.route('/inventory')
+    def serve_inventory():
+        df = get_product_data(engine)
+        return [
+            {"ID" :i ,
+             "NAME": row["Name"],
+             "STOCK QTY": row['Stock Quantity'],
+             "MINIMUM STOCK QTY": row['Minimum Stock'],
+             "ORDER QTY": row['Order Quantity']
+             }
+
+            for i, row in df.iterrows()
+        ]
+    app.run(port=8888)
 
 st.title("Webshop")
 

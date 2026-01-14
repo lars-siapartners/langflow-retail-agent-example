@@ -57,6 +57,12 @@ def create_db() -> Engine:
         generate_sample_data(engine)
     return engine
 
+def load_db() -> Engine:
+    engine = create_engine("sqlite:///retail_inventory.db")
+    SQLModel.metadata.create_all(engine)
+
+    return engine
+
 
 def generate_sample_data(engine: Engine):
     SQLModel.metadata.create_all(engine)
