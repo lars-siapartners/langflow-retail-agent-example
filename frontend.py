@@ -2,8 +2,7 @@ from database import Product, process_order, CustomerOrder
 import streamlit as st
 
 
-@st.fragment
-def product_fragment(product: Product):
+def product_component(product: Product):
     st.subheader(product.name)
     st.write(f"Description: {product.description or 'N/A'}")
     st.write(f"Price: ${product.price:.2f}")

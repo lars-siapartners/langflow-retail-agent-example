@@ -117,7 +117,7 @@ def process_order(order: CustomerOrder, engine: Engine):
             raise ValueError("Product not found")
 
         stock = session.exec(
-            SQLModel.select(StockLevels).where(StockLevels.product_id == product.id)
+            select(StockLevels).where(StockLevels.product_id == product.id)
         ).first()
 
         if not stock or stock.stock_quantity < order.quantity:
@@ -147,6 +147,7 @@ def get_product_data(engine: Engine, return_json=False) -> pd.DataFrame:
 
     data = [
         {
+            "ID": p.id,
             "Name": p.name,
             "Stock Quantity": sl.stock_quantity,
             "Minimum Stock": rr.minimum_stock,
